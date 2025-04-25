@@ -21,8 +21,9 @@ mongoose.connect(process.env.MONGODB_URI)
     .catch((err) => console.log('NO CONNECTION TO MANGODB', err))
 
 
-app.get('/hello', (req, res) => {
-    res.send('Hello page')
+app.get('/hello', async (req, res) => {
+    const data = await UserData.find()
+    res.send('Hello page', data)
 })
 
 app.post('/user/data', async (req, res) => {
