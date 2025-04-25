@@ -20,6 +20,11 @@ mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.log('NO CONNECTION TO MANGODB', err))
 
+
+app.get('/hello', (req, res) => {
+    res.send('Hello page')
+})
+
 app.post('/user/data', async (req, res) => {
     const user = await UserData.findById(req.body.id)
     res.json(user)
