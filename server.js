@@ -22,8 +22,7 @@ mongoose.connect(process.env.MONGODB_URI)
 
 
 app.get('/hello', async (req, res) => {
-    const data = await UserData.find()
-    res.json(data)
+    res.send('Hello')
 })
 
 app.post('/user/data', async (req, res) => {
