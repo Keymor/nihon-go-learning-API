@@ -2,12 +2,12 @@ import express from 'express'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import cors from 'cors'
-import Lessons from './lesson.js'
-import UserData from './user.js'
-import Kanji from './kanji.js'
+import Lessons from './mongoDB/lesson.js'
+import UserData from './mongoDB/user.js'
+import Kanji from './mongoDB/kanji.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import ReadLessons from './readLessons.js'
+import ReadLessons from './mongoDB/readLessons.js'
 const PORT = 8080
 
 dotenv.config()
@@ -19,11 +19,6 @@ app.use(express.json())
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.log('NO CONNECTION TO MANGODB', err))
-
-
-app.get('/hello', async (req, res) => {
-    res.send('Hello')
-})
 
 app.post('/user/data', async (req, res) => {
     const user = await UserData.findById(req.body.id)
@@ -103,26 +98,6 @@ app.post('/login', async (req, res) => {
     }
 })
 
-app.get('/cards/lesson', async (req, res) => {
-    const list = await Lessons.find()
-    res.json(list)
-})
-
-app.get('/lessons', async (req, res) => {
-    const authHeader = req.headers['authorization']
-    const token = authHeader?.split(' ')[1]
-
-    if (!token) res.sendStatus(401);
-
-    try {
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-        const lessons = await ReadLessons.find()
-        res.json(lessons)
-    } catch {
-        console.error(err)
-    }
-})
-
 app.post('/lessons', async (req, res) => {
     const authHeader = req.headers['authorization']
     const token = authHeader?.split(' ')[1]
@@ -144,6 +119,26 @@ app.post('/lessons', async (req, res) => {
                 }
             )
         }
+    } catch {
+        console.error(err)
+    }
+})
+
+app.get('/cards/lesson', async (req, res) => {
+    const list = await Lessons.find()
+    res.json(list)
+})
+
+app.get('/lessons', async (req, res) => {
+    const authHeader = req.headers['authorization']
+    const token = authHeader?.split(' ')[1]
+
+    if (!token) res.sendStatus(401);
+
+    try {
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const lessons = await ReadLessons.find()
+        res.json(lessons)
     } catch {
         console.error(err)
     }
